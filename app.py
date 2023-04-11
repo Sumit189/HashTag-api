@@ -54,6 +54,10 @@ def get_trending_hashtags_from_text(text):
     return rank_hashtags(text, all_hashtags)
 
 
+@app.route('/', methods=['GET'])
+def hello():
+    return 'Hello from API'
+
 @app.route('/trendingHashtags', methods=['POST'])
 def keywords_and_trending_hashtags():
     try:
