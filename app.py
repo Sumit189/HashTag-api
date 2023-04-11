@@ -27,6 +27,7 @@ def get_trending_hashtags(tag):
         response.raise_for_status()
 
         hashtags = response.json()['hashtags']
+        print("full hashtags {ht}".format(ht=hashtags))
         return [hashtag['hashtag']['name'] for hashtag in hashtags]
     except requests.exceptions.RequestException as e:
         print(f"Error occurred while getting hashtags for {tag}: {e}")
@@ -41,6 +42,7 @@ def rank_hashtags(text, hashtags):
                 if hashtag.lower() in token.text.lower():
                     hashtag_counts[hashtag] += 1
     sorted_hashtags = sorted(hashtag_counts.items(), key=lambda x: x[1], reverse=True)
+    print("hashtags {ht}".format(ht=sorted_hashtags))
     return [hashtag[0] for hashtag in sorted_hashtags][:30]
 
 def get_trending_hashtags_from_text(text):
