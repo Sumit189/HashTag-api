@@ -1,5 +1,6 @@
 import os
 import spacy
+import en_core_web_sm
 import requests
 import fake_useragent
 import re
@@ -8,7 +9,7 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
-nlp = spacy.load('en_core_web_sm')
+nlp = en_core_web_sm.load()
 
 def find_keywords(text):
     doc = nlp(text)

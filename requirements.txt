@@ -1,4 +1,5 @@
-flask
-spacy
+en-core-web-sm
+Flask
 requests
-fake_useragent
+fake-useragent
+spacy
