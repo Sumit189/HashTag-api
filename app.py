@@ -38,7 +38,9 @@ def keywords_and_trending_hashtags():
         data = request.get_json()
         if 'keywords' not in data or 'tags' not in data:
             return jsonify({'error': 'Missing Data'}), 400
-        trending_hashtags = get_top_words(data['keywords'], data['tags'])
+
+        ranked_words = rank_words(data['keywords'], data['tags'])
+        trending_hashtags = get_top_words(ranked_words)
         return jsonify({'trending_hashtags': trending_hashtags}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
