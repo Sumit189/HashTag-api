@@ -45,5 +45,24 @@ def keywords_and_trending_hashtags():
     except Exception as e:
         return jsonify({'error': str(e)}), 500
 
+@app.route('/extract_product_names', methods=['POST'])
+def extract_product_names_api():
+    try:
+        api_key = request.headers.get('X-API-Key')
+        if not api_key or api_key != os.environ.get('API_KEY'):
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        data = request.get_json()
+        if 'text' not in data:
+            return jsonify({'error': 'Missing Data'}), 400
+
+        # extract product names from text using spaCy's NER
+        doc = nlp(data['text'])
+        product_names = set([ent.text for ent in doc.ents if ent.label_ == "PRODUCT"])
+
+        return jsonify({'product_names': list(product_names)}), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(debug=True, port=int(os.environ.get('PORT', 5000)), host='0.0.0.0')
