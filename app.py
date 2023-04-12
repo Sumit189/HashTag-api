@@ -20,7 +20,9 @@ def get_top_words(ranked_words):
     for words in ranked_words.values():
         all_words.extend([w[0] for w in words])
     top_words = sorted(set(all_words), key=lambda x: max([w[1] for w in ranked_words.values() if x in [w[0] for w in ranked_words[x]]]), reverse=True)[:30]
+    top_words = [word for word in top_words if max([w[1] for w in ranked_words.values() if word in [w[0] for w in ranked_words[word]]]) >= 0.5]
     return top_words
+
 
 @app.route('/', methods=['GET'])
 def hello():
