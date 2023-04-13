@@ -52,11 +52,22 @@ def trending_hashtags():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/get_keywords', methods=['POST'])
-def extract_keywords(text):
-    stop_words = set(stopwords.words('english'))
-    tokens = word_tokenize(text.lower())
-    keywords = [token for token in tokens if token not in stop_words and token.isalpha()]
-    return keywords
+def extract_keywords():
+    try:
+        api_key = request.headers.get('X-API-Key')
+        if not api_key or api_key != os.environ.get('API_KEY'):
+            return jsonify({'error': 'Invalid API key'}), 401
+        
+        data = request.get_json()
+        if 'text' not in data:
+            return jsonify({'error': 'Missing Data'}), 400
 
+        stop_words = set(stopwords.words('english'))
+        tokens = word_tokenize(data['text'].lower())
+        keywords = [token for token in tokens if token not in stop_words and token.isalpha()]
+        return keywords
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    
 if __name__ == '__main__':
     app.run(debug=True, port=int(os.environ.get('PORT', 5000)), host='0.0.0.0')
