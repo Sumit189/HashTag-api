@@ -24,7 +24,7 @@ def rank_tags(keywords, tags):
             ranked_words[keyword][tag] = similarity_matrix[i][j]
     return ranked_words
 
-def get_top_tags(ranked_words, threshold=0.5, num_tags=30):
+def get_top_tags(ranked_words, threshold, num_tags):
     all_tags = {}
     for keyword in ranked_words:
         for tag, score in ranked_words[keyword].items():
@@ -49,8 +49,16 @@ def trending_hashtags():
         if 'keywords' not in data or 'tags' not in data:
             return jsonify({'error': 'Missing Data'}), 400
 
+        threshold = 0.5
+        num_Tags = 30
+        if data['threshold']:
+            threshold = data['threshold']
+
+        if data['num_Tags']:
+            num_Tags = data['num_Tags']
+        
         ranked_words = rank_tags(data['keywords'], data['tags'])
-        trending_hashtags = get_top_tags(ranked_words)
+        trending_hashtags = get_top_tags(ranked_words, threshold, num_Tags)
         if trending_hashtags:
             trending_hashtags = ['#' + tag for tag in trending_hashtags]
         return jsonify({'trending_hashtags': trending_hashtags}), 200
