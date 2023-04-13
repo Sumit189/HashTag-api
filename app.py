@@ -5,22 +5,26 @@ from sklearn.metrics.pairwise import cosine_similarity
 import nltk
 nltk.download('stopwords')
 nltk.download('punkt')
-
+nltk.download('wordnet')
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
 app = Flask(__name__)
 
 def rank_tags(keywords, tags):
+    lemmatizer = WordNetLemmatizer()
+    keywords_lemmatized = [lemmatizer.lemmatize(keyword) for keyword in keywords]
+    tags_lemmatized = [lemmatizer.lemmatize(tag) for tag in tags]
     vectorizer = TfidfVectorizer()
-    X = vectorizer.fit_transform([*keywords, *tags])
+    X = vectorizer.fit_transform([*keywords_lemmatized, *tags_lemmatized])
     keyword_vectors = X[:len(keywords)]
     tag_vectors = X[len(keywords):]
     similarity_matrix = cosine_similarity(keyword_vectors, tag_vectors)
     ranked_words = {}
-    for i, keyword in enumerate(keywords):
+    for i, keyword in enumerate(keywords_lemmatized):
         ranked_words[keyword] = {}
-        for j, tag in enumerate(tags):
+        for j, tag in enumerate(tags_lemmatized):
             ranked_words[keyword][tag] = similarity_matrix[i][j]
     return ranked_words
 
@@ -50,15 +54,15 @@ def trending_hashtags():
             return jsonify({'error': 'Missing Data'}), 400
 
         threshold = 0.5
-        num_Tags = 30
+        num_tags = 30
         if data['threshold']:
             threshold = data['threshold']
 
-        if data['num_Tags']:
-            num_Tags = data['num_Tags']
+        if data['num_tags']:
+            num_tags = data['num_tags']
         
         ranked_words = rank_tags(data['keywords'], data['tags'])
-        trending_hashtags = get_top_tags(ranked_words, threshold, num_Tags)
+        trending_hashtags = get_top_tags(ranked_words, threshold, num_tags)
         if trending_hashtags:
             trending_hashtags = ['#' + tag for tag in trending_hashtags]
         return jsonify({'trending_hashtags': trending_hashtags}), 200
