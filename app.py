@@ -2,7 +2,6 @@ import os
 from flask import Flask, request, jsonify
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 
