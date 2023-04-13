@@ -51,6 +51,8 @@ def trending_hashtags():
 
         ranked_words = rank_tags(data['keywords'], data['tags'])
         trending_hashtags = get_top_tags(ranked_words)
+        if trending_hashtags:
+            trending_hashtags = ['#' + tag for tag in trending_hashtags]
         return jsonify({'trending_hashtags': trending_hashtags}), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
